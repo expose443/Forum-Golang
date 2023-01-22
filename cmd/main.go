@@ -7,10 +7,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"01.alem.school/git/abdu0222/forum/internal/app"
-	"01.alem.school/git/abdu0222/forum/internal/repository"
-	"01.alem.school/git/abdu0222/forum/internal/service"
 )
 
 func main() {
