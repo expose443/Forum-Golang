@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -23,6 +24,8 @@ func AddHomeCookieCheckOnPaths(paths ...string) {
 		HomeCookieOnPaths[path] = struct{}{}
 	}
 }
+
+const Username string = ""
 
 func (app *App) WelcomeMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -73,4 +76,26 @@ func (app *App) HomeMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			next.ServeHTTP(w, r)
 		}
 	}
+}
+
+func (app *App) authMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		c, err := r.Cookie("session_token")
+		if err != nil {
+			http.Redirect(w, r, "sign-in-form", http.StatusFound)
+			return
+		}
+		token := c.Value
+		sessionFromDb, err := app.sessionService.GetSessionByToken(token)
+		if err != nil {
+			http.Redirect(w, r, "sign-in-form", http.StatusFound)
+			return
+		}
+		if sessionFromDb.Expiry.Before(time.Now()) {
+			http.Redirect(w, r, "/sign-in-form", http.StatusFound)
+			return
+		}
+		ctx := context.WithValue(r.Context(), Username, sessionFromDb.Username)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
