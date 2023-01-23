@@ -23,7 +23,7 @@ func (app *App) Run() *http.Server {
 
 	port, ok := os.LookupEnv("FORUM_PORT")
 	if !ok {
-		port = "8080"
+		port = ":8080"
 	}
 
 	server := &http.Server{

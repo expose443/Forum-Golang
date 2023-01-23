@@ -37,7 +37,6 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 			}
 		}
-
 		sessionToken := uuid.NewString()
 		expiry := time.Now().Add(10 * time.Minute)
 		session := model.Session{
@@ -45,8 +44,7 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Token:  sessionToken,
 			Expiry: expiry,
 		}
-		// TODO LOGIN
-		_, err = app.authService.Login(user, session)
+		_, err = app.authService.Login(user, &session)
 		if err != nil {
 			log.Printf("user %s sign in was failed\n", user.Email)
 			Messages.Message = "incorrect data"
@@ -60,7 +58,7 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Expires: expiry,
 		})
 
-		log.Printf("user %s sign in was successfully")
+		log.Printf("user %s sign in was successfully\n", user.Email)
 		http.Redirect(w, r, "/", http.StatusFound)
 
 	default:
@@ -100,15 +98,18 @@ func (app *App) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
-	// TODO Logout logic
-}
-
-func (app *App) LoginGet(w http.ResponseWriter, r *http.Request) {
-	pkg.RenderTemplate(w, "signin.html", Messages)
-	pkg.ClearStruct(&Messages)
-}
-
-func (app *App) LoginPost(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("session_token")
+	if err != nil {
+		pkg.ErrorHandler(w, http.StatusInternalServerError)
+		return
+	}
+	err = app.authService.Logout(c.Value)
+	if err != nil {
+		log.Println(err)
+		pkg.ErrorHandler(w, http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/welcome", http.StatusFound)
 }
 
 func getUser(r *http.Request) (*model.User, error) {
