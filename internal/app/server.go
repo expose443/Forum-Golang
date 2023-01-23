@@ -4,21 +4,19 @@ import (
 	"net/http"
 	"os"
 	"time"
-
-	delivery "github.com/with-insomnia/Forum-Golang/internal/delivery/http"
 )
 
 func (app *App) Run() *http.Server {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", delivery.IndexHandler)
-	mux.HandleFunc("/sign-in", delivery.LoginHandler)
-	mux.HandleFunc("/sign-up", delivery.RegisterHandler)
-	mux.HandleFunc("/post", delivery.PostHandler)
-	mux.HandleFunc("/comment", delivery.CommentHandler)
-	mux.HandleFunc("/like", delivery.ReactionHandler)
-	mux.HandleFunc("/filter", delivery.FilterHandler)
-	mux.HandleFunc("/logout", delivery.LogoutHandler)
+	mux.HandleFunc("/", app.IndexHandler)
+	mux.HandleFunc("/sign-in", app.LoginHandler)
+	mux.HandleFunc("/sign-up", app.RegisterHandler)
+	mux.HandleFunc("/post", app.PostHandler)
+	mux.HandleFunc("/comment", app.CommentHandler)
+	mux.HandleFunc("/like", app.ReactionHandler)
+	mux.HandleFunc("/filter", app.FilterHandler)
+	mux.HandleFunc("/logout", app.LogoutHandler)
 
 	fs := http.FileServer(http.Dir("./templates/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
