@@ -6,7 +6,7 @@ import (
 )
 
 type UserService interface {
-	GetUserByToken(token string) (*model.User, error)
+	GetUserByToken(token string) (model.User, error)
 }
 
 type userService struct {
@@ -19,15 +19,15 @@ func NewUserService(dao repository.DAO) UserService {
 	}
 }
 
-func (u *userService) GetUserByToken(token string) (*model.User, error) {
+func (u *userService) GetUserByToken(token string) (model.User, error) {
 	userID, err := u.repository.GetUserIdByToken(token)
 	if err != nil {
-		return nil, err
+		return model.User{}, err
 	}
 
-	user, err := u.repository.GetUserByUserId(*userID)
+	user, err := u.repository.GetUserByUserId(userID)
 	if err != nil {
-		return nil, err
+		return model.User{}, err
 	}
 
 	return user, nil

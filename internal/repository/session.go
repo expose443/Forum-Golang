@@ -8,8 +8,8 @@ import (
 )
 
 type SessionQuery interface {
-	GetSessionByToken(token string) (*model.Session, error)
-	GetSessionByUserID(userId int) (*model.Session, error)
+	GetSessionByToken(token string) (model.Session, error)
+	GetSessionByUserID(userId int) (model.Session, error)
 	CreateSession(session model.Session) error
 	DeleteSession(token string) error
 }
@@ -23,7 +23,7 @@ func (s *sessionQuery) CreateSession(session model.Session) error {
 	if err != nil {
 		return err
 	}
-	_, err = tx.Exec("INSERT INTO sessions(email, username, token, expiry) VALUES(?,?,?,?)", session.Email, session.Username, session.Token, session.Expiry)
+	_, err = tx.Exec("INSERT INTO sessions(user_id, token, expiry) VALUES(?,?,?)", session.UserId, session.Token, session.Expiry)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -31,30 +31,30 @@ func (s *sessionQuery) CreateSession(session model.Session) error {
 	return tx.Commit()
 }
 
-func (s *sessionQuery) GetSessionByToken(token string) (*model.Session, error) {
-	stmt, err := s.db.Prepare("SELECT session_id, email, username, token, expiry FROM sessions WHERE token = ?")
+func (s *sessionQuery) GetSessionByToken(token string) (model.Session, error) {
+	stmt, err := s.db.Prepare("SELECT user_id, token, expiry FROM sessions WHERE token = ?")
 	if err != nil {
-		return nil, err
+		return model.Session{}, err
 	}
 	row := stmt.QueryRow(token)
 	var session model.Session
-	if err := row.Scan(&session.ID, &session.Email, &session.Username, &session.Token, &session.Expiry); err != nil {
-		return nil, err
+	if err := row.Scan(&session.UserId, &session.Token, &session.Expiry); err != nil {
+		return model.Session{}, err
 	}
-	return &session, nil
+	return session, nil
 }
 
-func (s *sessionQuery) GetSessionByUserID(userId int) (*model.Session, error) {
-	stmt, err := s.db.Prepare("SELECT session_id, user_id,  email, username, token, expiry FROM sessions WHERE user_id = ?")
+func (s *sessionQuery) GetSessionByUserID(userId int) (model.Session, error) {
+	stmt, err := s.db.Prepare("SELECT user_id, token, expiry FROM sessions WHERE user_id = ?")
 	if err != nil {
-		return nil, err
+		return model.Session{}, err
 	}
 	row := stmt.QueryRow(userId)
 	var session model.Session
-	if err := row.Scan(&session.ID, &session.UserId, &session.Email, &session.Username, &session.Token, &session.Expiry); err != nil {
-		return nil, err
+	if err := row.Scan(&session.UserId, &session.Token, &session.Expiry); err != nil {
+		return model.Session{}, err
 	}
-	return &session, nil
+	return session, nil
 }
 
 func (s *sessionQuery) DeleteSession(token string) error {

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,26 +7,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign-up</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link rel="icon" href='/static/img/f.png' type="image/png">
 </head>
 <body>
     <div class="center">
         <h1>Register</h1>
         <form action="/sign-up" method="post">
             <div class="txt_field">
-                <input type="text" name="username" >
+                <input type="text" name="username" required>
                 <span></span>
                 <label>Username</label>
             </div>
-     
             <div class="txt_field">
-                <input type="email" name="email" >
+                <input type="text" name="email" required>
                 <span></span>
                 <label>Email</label>
-           
             </div>
             <div class="txt_field">
-                <input type="password" name="password">
+                <input type="password" name="password" required>
                 <span></span>
                 <label>Password</label>
             </div>
@@ -33,7 +31,7 @@
             <div class="signup_link">
                 have an account? <a href="/sign-in">Sign in</a>
             </div>
-            <div >
+            <div>
                 <h4>{{ .Message}}</h4>
             </div>
         </form>

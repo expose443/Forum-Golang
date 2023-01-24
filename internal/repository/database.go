@@ -3,7 +3,8 @@ package repository
 import (
 	"database/sql"
 	"log"
-	_"github.com/mattn/go-sqlite3"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func NewDB() (*sql.DB, error) {
@@ -45,12 +46,9 @@ func createTable(db *sql.DB) error {
 	`
 	session := `
 	CREATE TABLE IF NOT EXISTS sessions(
-		session_id INTEGER PRIMARY KEY AUTOINCREMENT,
-		email TEXT NOT NULL,
-		username TEXT NOT NULL,
+		user_id INTEGER NOT NULL,
 		token TEXT NOT NULL,
-		expiry DATE NOT NULL,
-		user_id INTEGER NOT NULL
+		expiry DATE NOT NULL
 	)
 	`
 

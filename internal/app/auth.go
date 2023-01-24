@@ -2,6 +2,7 @@ package app
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -44,7 +45,7 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Token:  sessionToken,
 			Expiry: expiry,
 		}
-		_, err = app.authService.Login(user, &session)
+		err = app.authService.Login(&user, &session)
 		if err != nil {
 			log.Printf("user %s sign in was failed\n", user.Email)
 			Messages.Message = "incorrect data"
@@ -79,7 +80,7 @@ func (app *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-		err = app.authService.Register(user)
+		err = app.authService.Register(&user)
 		if err != nil {
 			log.Printf("user %s sign up was failed\n", user.Email)
 			Messages.Message = "user exist"
@@ -112,14 +113,25 @@ func (app *App) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/welcome", http.StatusFound)
 }
 
-func getUser(r *http.Request) (*model.User, error) {
+func getUser(r *http.Request) (model.User, error) {
 	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	nameRegex, _ := regexp.Compile("[a-zA-z]{6,30}")
-	emailRegex, _ := regexp.Compile("^[a-zA-Z0-9_\\-\\.]+@[a-zA-Z0-9\\-\\.]+\\.[a-zA-Z]{2,}$")
-	passwordRegex, _ := regexp.Compile("[a-zA-Z0-9]{6, 30}")
+	nameRegex, err := regexp.Compile("[a-zA-Z0-9_-]{3,16}")
+	if err != nil {
+		return model.User{}, errors.New("name regex fail")
+	}
+
+	emailRegex, err := regexp.Compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}")
+	if err != nil {
+		return model.User{}, errors.New("name regex fail")
+	}
+
+	passwordRegex, err := regexp.Compile("[a-zA-Z0-9!@#$%^&*()_+=-]{8,}")
+	if err != nil {
+		return model.User{}, errors.New("pass regex fail")
+	}
 
 	usernameIsValid := nameRegex.MatchString(username)
 	emailIsValid := emailRegex.MatchString(email)
@@ -128,19 +140,24 @@ func getUser(r *http.Request) (*model.User, error) {
 	switch r.URL.Path {
 	case "/sign-in":
 		if emailIsValid && passwordIsValid {
-			return &model.User{
+			return model.User{
 				Email:    email,
 				Password: password,
 			}, nil
+		} else {
+			return model.User{}, errors.New("invalid user data for sign in")
 		}
 	case "/sign-up":
-		if emailIsValid && passwordIsValid && usernameIsValid {
-			return &model.User{
+		if passwordIsValid && usernameIsValid && emailIsValid {
+			return model.User{
 				Username: username,
 				Email:    email,
 				Password: password,
 			}, nil
+		} else {
+			return model.User{}, errors.New("invalid user data for sign up")
 		}
+	default:
+		return model.User{}, fmt.Errorf("This url path was not found %s", r.URL.Path)
 	}
-	return nil, errors.New("invalid user data")
 }

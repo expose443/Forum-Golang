@@ -6,7 +6,7 @@ import (
 )
 
 type AuthService interface {
-	Login(user *model.User, session *model.Session) (*model.Session, error)
+	Login(user *model.User, session *model.Session) error
 	Register(user *model.User) error
 	Logout(token string) error
 }
@@ -21,8 +21,8 @@ func NewAuthService(dao repository.DAO) AuthService {
 	}
 }
 
-func (a *authService) Login(user *model.User, session *model.Session) (*model.Session, error) {
-	return nil, nil
+func (a *authService) Login(user *model.User, session *model.Session) error {
+	return nil
 }
 
 func (a *authService) Register(user *model.User) error {
