@@ -22,3 +22,6 @@ func (app *App) FilterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (app *App) FilterWelcomeHandler(w http.ResponseWriter, r *http.Request) {
+}

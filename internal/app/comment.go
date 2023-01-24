@@ -17,3 +17,6 @@ func (app *App) CommentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (app *App) CommentWelcomeHandler(w http.ResponseWriter, r *http.Request) {
+}

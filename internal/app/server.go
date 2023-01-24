@@ -7,16 +7,34 @@ import (
 )
 
 func (app *App) Run() *http.Server {
+	authPaths := []string{
+		"/",
+		"/reaction",
+		"/comment",
+		"/filter",
+		"/post",
+		"/logout",
+		"/welcome",
+		"/sign-in",
+		"/sign-up",
+	}
+
+	AddAuthPaths(authPaths...)
+
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", app.IndexHandler)
-	mux.HandleFunc("/sign-in", app.LoginHandler)
-	mux.HandleFunc("/sign-up", app.RegisterHandler)
-	mux.HandleFunc("/post", app.PostHandler)
-	mux.HandleFunc("/comment", app.CommentHandler)
-	mux.HandleFunc("/like", app.ReactionHandler)
-	mux.HandleFunc("/filter", app.FilterHandler)
-	mux.HandleFunc("/logout", app.LogoutHandler)
+	mux.HandleFunc("/", app.authorizedMiddleware(app.IndexHandler))
+	mux.HandleFunc("/post", app.authorizedMiddleware(app.PostHandler))
+	mux.HandleFunc("/comment", app.authorizedMiddleware(app.CommentHandler))
+	mux.HandleFunc("/reaction", app.authorizedMiddleware(app.ReactionHandler))
+	mux.HandleFunc("/filter", app.authorizedMiddleware(app.FilterHandler))
+	mux.HandleFunc("/logout", app.authorizedMiddleware(app.LogoutHandler))
+
+	mux.HandleFunc("/welcome/filter", app.nonAuthorizedMiddleware(app.FilterWelcomeHandler))
+	mux.HandleFunc("/welcome", app.nonAuthorizedMiddleware(app.WelcomeHandler))
+	mux.HandleFunc("/sign-in", app.nonAuthorizedMiddleware(app.LoginHandler))
+	mux.HandleFunc("/sign-up", app.nonAuthorizedMiddleware(app.RegisterHandler))
+	mux.HandleFunc("/welcome/comment", app.nonAuthorizedMiddleware(app.CommentWelcomeHandler))
 
 	fs := http.FileServer(http.Dir("./templates/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
