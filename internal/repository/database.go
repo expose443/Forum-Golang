@@ -34,10 +34,9 @@ func createTable(db *sql.DB) error {
 	posts := `
 	CREATE TABLE IF NOT EXISTS posts(
 		post_id INTEGER PRIMARY KEY AUTOINCREMENT,
+		user_id INTEGER NOT NULL,
 		title TEXT NOT NULL,
 		message TEXT NOT NULL,
-		email TEXT NOT NULL,
-		username TEXT NOT NULL,
 		like INTEGER NOT NULL,
 		dislike INTEGER NOT NULL,
 		category TEXT NOT NULL,
@@ -56,7 +55,7 @@ func createTable(db *sql.DB) error {
 	CREATE TABLE IF NOT EXISTS comments(
 		comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
 		post_id INTEGER NOT NULL,
-		username TEXT NOT NULL,
+		user_Id INTEGER NOT NULL,
 		message TEXT NOT NULL,
 		like INTEGER NOT NULL,
 		dislike INTEGER NOT NULL,
@@ -66,7 +65,7 @@ func createTable(db *sql.DB) error {
 
 	likes := `
 	CREATE TABLE IF NOT EXISTS likes(
-		username TEXT NOT NULL,
+		user_id INTEGER NOT NULL,
 		post_id INTEGER NOT NULL,
 		status INTEGER NOT NULL
 	)
@@ -74,13 +73,13 @@ func createTable(db *sql.DB) error {
 
 	dislikes := `
 	CREATE TABLE IF NOT EXISTS dislikes(
-		username TEXT NOT NULL,
+		user_id INTEGER NOT NULL,
 		post_id INTEGER NOT NULL,
 		status INTEGER NOT NULL
 	)
 	`
 	commentLikes := `CREATE TABLE IF NOT EXISTS comment_likes(
-		username TEXT NOT NULL, 
+		user_id INTEGER NOT NULL, 
 		comment_id INTEGER NOT NULL,
 		status INTEGER NOT NULL
 	)

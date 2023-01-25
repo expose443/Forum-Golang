@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -24,23 +25,27 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 		cookie, err := r.Cookie("session_token")
 		if err != nil {
-			http.Redirect(w, r, "/welcome", http.StatusFound)
+			fmt.Println(1)
+			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
 
 		session, err := app.sessionService.GetSessionByToken(cookie.Value)
 		if err != nil {
-			http.Redirect(w, r, "/welcome", http.StatusFound)
+			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
 		if session.Expiry.Before(time.Now()) {
-			http.Redirect(w, r, "/welcome", http.StatusFound)
+			fmt.Println(3)
+			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
 
 		user, err := app.userService.GetUserByToken(cookie.Value)
 		if err != nil {
-			http.Redirect(w, r, "/welcome", http.StatusFound)
+			fmt.Println(4)
+			fmt.Println(err)
+			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
 		ctx := context.WithValue(r.Context(), "user", user)

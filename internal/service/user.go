@@ -7,6 +7,7 @@ import (
 
 type UserService interface {
 	GetUserByToken(token string) (model.User, error)
+	GetUserByEmail(email string) (model.User, error)
 }
 
 type userService struct {
@@ -24,11 +25,14 @@ func (u *userService) GetUserByToken(token string) (model.User, error) {
 	if err != nil {
 		return model.User{}, err
 	}
-
-	user, err := u.repository.GetUserByUserId(userID)
+	user, err := u.repository.GetUserByUserId(userID + 1)
 	if err != nil {
 		return model.User{}, err
 	}
 
 	return user, nil
+}
+
+func (u *userService) GetUserByEmail(email string) (model.User, error) {
+	return model.User{}, nil
 }

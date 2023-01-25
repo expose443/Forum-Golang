@@ -30,7 +30,11 @@
                 Back to welcome page <a href="/welcome">Welcome</a>
             </div>
             <div >
-                <h4>{{ .Message}}</h4>
+                <script type="text/javascript">
+                    if ('{{ .Message}}' != ""){
+                        alert('{{ .Message}}');
+                    }
+                </script>
             </div>
         </form>
     </div>

@@ -6,9 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/with-insomnia/Forum-Golang/internal/model"
 	"github.com/with-insomnia/Forum-Golang/pkg"
 )
@@ -24,42 +22,25 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 		user, err := getUser(r)
 		if err != nil {
-			pkg.ErrorHandler(w, http.StatusBadRequest)
+			Messages.Message = "Wrong password or email"
+			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			log.Println(err)
 			return
 		}
-		sessionDb, err := app.sessionService.GetSessionByUserID(int(user.ID))
+
+		session, err := app.authService.Login(&user)
 		if err != nil {
-			log.Printf("session for user_id %d is not found\n", user.ID)
-		}
-		if sessionDb.UserId == user.ID {
-			err := app.sessionService.DeleteSession(sessionDb.Token)
-			if err != nil {
-				log.Println(err)
-			}
-		}
-		sessionToken := uuid.NewString()
-		expiry := time.Now().Add(10 * time.Minute)
-		session := model.Session{
-			UserId: user.ID,
-			Token:  sessionToken,
-			Expiry: expiry,
-		}
-		err = app.authService.Login(&user, &session)
-		if err != nil {
-			log.Printf("user %s sign in was failed\n", user.Email)
-			Messages.Message = "incorrect data"
+			Messages.Message = "Wrong password or email"
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
 
 		http.SetCookie(w, &http.Cookie{
 			Name:    "session_token",
-			Value:   sessionToken,
-			Expires: expiry,
+			Value:   session.Token,
+			Expires: session.Expiry,
 		})
 
-		log.Printf("user %s sign in was successfully\n", user.Email)
 		http.Redirect(w, r, "/", http.StatusFound)
 
 	default:
@@ -76,7 +57,8 @@ func (app *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		user, err := getUser(r)
 		if err != nil {
-			pkg.ErrorHandler(w, http.StatusBadRequest)
+			Messages.Message = "Wrong user data"
+			http.Redirect(w, r, "/sign-up", http.StatusFound)
 			log.Println(err)
 			return
 		}
@@ -95,10 +77,10 @@ func (app *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
-		return
-	}
+	// if r.Method != http.MethodGet {
+	// 	pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
+	// 	return
+	// }
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		pkg.ErrorHandler(w, http.StatusInternalServerError)

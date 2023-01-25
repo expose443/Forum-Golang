@@ -58,11 +58,7 @@ func (s *sessionQuery) GetSessionByUserID(userId int) (model.Session, error) {
 }
 
 func (s *sessionQuery) DeleteSession(token string) error {
-	stmt, err := s.db.Prepare("DELETE FROM sessions WHERE token = ?")
-	if err != nil {
-		return err
-	}
-	res, err := stmt.Exec(token)
+	res, err := s.db.Exec("DELETE FROM sessions WHERE token = ?", token)
 	if err != nil {
 		return err
 	}
