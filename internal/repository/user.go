@@ -36,7 +36,7 @@ func (u *userQuery) GetUserIdByToken(token string) (int, error) {
 }
 
 func (u *userQuery) GetUserByUserId(userID int) (model.User, error) {
-	row := u.db.QueryRow("SELECT * FROM users WHERE user_id = ?", userID)
+	row := u.db.QueryRow("SELECT user_id, email, password, username FROM users WHERE user_id = ?", userID)
 	var user model.User
 	if err := row.Scan(&user.ID, &user.Email, &user.Password, &user.Username); err != nil {
 		return model.User{}, err

@@ -8,17 +8,33 @@ import (
 )
 
 func (app *App) IndexHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		pkg.ErrorHandler(w, http.StatusNotFound)
+		return
+	}
 	if r.Method != http.MethodGet {
 		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
-	switch r.URL.Path {
-	case "/":
-		pkg.RenderTemplate(w, "index.html", model.Data{})
-	default:
-		pkg.ErrorHandler(w, http.StatusNotFound)
+
+	user, ok := r.Context().Value(keyUser).(model.User)
+	if !ok {
+		pkg.ErrorHandler(w, http.StatusUnauthorized)
 		return
 	}
+
+	post, err := app.postService.GetAllPosts()
+	if err != nil {
+		pkg.ErrorHandler(w, http.StatusInternalServerError)
+		return
+	}
+
+	data := model.Data{
+		Posts: post,
+		User:  user,
+		Genre: "/",
+	}
+	pkg.RenderTemplate(w, "index.html", data)
 }
 
 func (app *App) WelcomeHandler(w http.ResponseWriter, r *http.Request) {

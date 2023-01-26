@@ -11,6 +11,8 @@ import (
 
 var AuthPaths = make(map[string]struct{})
 
+const keyUser = "user"
+
 func AddAuthPaths(paths ...string) {
 	for _, path := range paths {
 		AuthPaths[path] = struct{}{}
@@ -25,7 +27,6 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 		cookie, err := r.Cookie("session_token")
 		if err != nil {
-			fmt.Println(1)
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
@@ -36,19 +37,17 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 		if session.Expiry.Before(time.Now()) {
-			fmt.Println(3)
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
 
 		user, err := app.userService.GetUserByToken(cookie.Value)
 		if err != nil {
-			fmt.Println(4)
 			fmt.Println(err)
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
-		ctx := context.WithValue(r.Context(), "user", user)
+		ctx := context.WithValue(r.Context(), keyUser, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
