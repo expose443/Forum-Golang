@@ -41,3 +41,28 @@ func (p *postQuery) DeletePostLike(post_id, user_id int) error {
 	_, err := p.db.Exec(query, post_id, user_id)
 	return err
 }
+
+func (p *postQuery) GetCommentLikeStatus(comment_id, userId int) int {
+	query := `SELECT status FROM comment_likes WHERE comment_id = ? AND user_id = ?`
+	var likeStatus int
+	p.db.QueryRow(query, comment_id, userId).Scan(&likeStatus)
+	return likeStatus
+}
+
+func (p *postQuery) LikeComment(comment_id, user_id, status int) error {
+	query := `INSERT INTO comment_likes(comment_id, user_id, status) VALUES(?,?,?)`
+	_, err := p.db.Exec(query, comment_id, user_id, status)
+	return err
+}
+
+func (p *postQuery) UpdateCommentLikeDislike(comment_id, like, dislike int) error {
+	query := `UPDATE comments SET like = ?, dislike = ? WHERE comment_id = ?`
+	_, err := p.db.Exec(query, like, dislike, comment_id)
+	return err
+}
+
+func (p *postQuery) DeleteCommentLike(comment_id, user_id int) error {
+	query := `DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?`
+	_, err := p.db.Exec(query, comment_id, user_id)
+	return err
+}

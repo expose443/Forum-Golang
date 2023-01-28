@@ -13,6 +13,7 @@ func (app *App) ReactionHandler(w http.ResponseWriter, r *http.Request) {
 		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
+	strId := r.URL.Query().Get("id")
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
 		pkg.ErrorHandler(w, http.StatusBadRequest)
@@ -53,9 +54,31 @@ func (app *App) ReactionHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, path, http.StatusFound)
 		}
 	case "/comment/like":
-		// TODO logic
+		status := app.postService.LikeComment(id, int(user.ID))
+		switch status {
+		case http.StatusInternalServerError:
+			pkg.ErrorHandler(w, http.StatusInternalServerError)
+			return
+		case http.StatusBadRequest:
+			pkg.ErrorHandler(w, http.StatusBadRequest)
+			return
+		case http.StatusOK:
+			path = "/comment?id=" + strId
+			http.Redirect(w, r, path, http.StatusFound)
+		}
 	case "/comment/dislike":
-		// TODO logic
+		status := app.postService.DisLikeComment(id, int(user.ID))
+		switch status {
+		case http.StatusInternalServerError:
+			pkg.ErrorHandler(w, http.StatusInternalServerError)
+			return
+		case http.StatusBadRequest:
+			pkg.ErrorHandler(w, http.StatusBadRequest)
+			return
+		case http.StatusOK:
+			path = "/comment?id=" + strId
+			http.Redirect(w, r, path, http.StatusFound)
+		}
 	default:
 		pkg.ErrorHandler(w, http.StatusNotFound)
 		return

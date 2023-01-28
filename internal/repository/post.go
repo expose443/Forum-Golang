@@ -24,6 +24,15 @@ type PostQuery interface {
 	GetAllCommentByPostID(postId int64) ([]model.Comment, error)
 	GetCommentByCommentID(commentId int64) (model.Comment, error)
 	CommentPost(comment model.Comment) error
+
+	GetCommentLikeStatus(comment_id, userId int) int
+	LikeComment(comment_id, user_id, status int) error
+	UpdateCommentLikeDislike(comment_id, like, dislike int) error
+	DeleteCommentLike(comment_id, user_id int) error
+
+	DisLikeComment(comment_id, user_id, status int) error
+	DeleteCommentDisLike(comment_id, user_id int) error
+	GetDisLikeCommentStatus(comment_id, userId int) int
 }
 
 type postQuery struct {

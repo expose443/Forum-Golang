@@ -21,6 +21,8 @@ func (app *App) Run() *http.Server {
 		"/welcome/comment",
 		"/post/like",
 		"/post/dislike",
+		"/comment/dislike",
+		"/comment/like",
 	}
 
 	AddAuthPaths(authPaths...)
@@ -32,6 +34,8 @@ func (app *App) Run() *http.Server {
 	mux.HandleFunc("/comment", app.authorizedMiddleware(app.CommentHandler))
 	mux.HandleFunc("/post/like", app.authorizedMiddleware(app.ReactionHandler))
 	mux.HandleFunc("/post/dislike", app.authorizedMiddleware(app.ReactionHandler))
+	mux.HandleFunc("/comment/like", app.authorizedMiddleware(app.ReactionHandler))
+	mux.HandleFunc("/comment/dislike", app.authorizedMiddleware(app.ReactionHandler))
 	mux.HandleFunc("/filter", app.authorizedMiddleware(app.FilterHandler))
 	mux.HandleFunc("/logout", app.LogoutHandler)
 

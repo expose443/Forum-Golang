@@ -87,7 +87,7 @@ func createTable(db *sql.DB) error {
 	)
 	`
 	commentDislikes := `CREATE TABLE IF NOT EXISTS comment_dislikes(
-		username TEXT NOT NULL, 
+		user_id INTEGER NOT NULL, 
 		comment_id INTEGER NOT NULL,
 		status INTEGER NOT NULL
 	)

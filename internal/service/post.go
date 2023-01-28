@@ -11,6 +11,8 @@ import (
 type PostService interface {
 	LikePost(postId, userId int) int
 	DislikePost(postId, userId int) int
+	LikeComment(commentId, userId int) int
+	DisLikeComment(commentId, userId int) int
 	GetAllPosts() ([]model.Post, error)
 	CreatePost(post *model.Post) (int, error)
 	GetAllCommentsAndPostByPostID(id int64) (model.Post, int)

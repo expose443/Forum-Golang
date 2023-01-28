@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/with-insomnia/Forum-Golang/internal/model"
 )
@@ -44,6 +45,7 @@ func (s *sessionQuery) GetSessionByUserID(userId int) (model.Session, error) {
 	row := s.db.QueryRow("SELECT user_id, token, expiry FROM sessions WHERE user_id = ?", userId)
 	var session model.Session
 	if err := row.Scan(&session.UserId, &session.Token, &session.Expiry); err != nil {
+		fmt.Println(err)
 		return model.Session{}, err
 	}
 	return session, nil
