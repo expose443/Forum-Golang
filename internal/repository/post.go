@@ -48,7 +48,7 @@ func (p *postQuery) GetAllPost() ([]model.Post, error) {
 	var all []model.Post
 	for rows.Next() {
 		var post model.Post
-		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Author.ID, &post.Like, &post.Dislike, &post.Category, &post.CreateTime); err != nil {
+		if err := rows.Scan(&post.ID, &post.Author.ID, &post.Title, &post.Content, &post.Like, &post.Dislike, &post.Category, &post.CreateTime); err != nil {
 			return []model.Post{}, err
 		}
 		all = append(all, post)

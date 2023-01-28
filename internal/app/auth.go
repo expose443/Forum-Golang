@@ -52,8 +52,10 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 func (app *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
+
 		pkg.RenderTemplate(w, "signup.html", Messages)
 		pkg.ClearStruct(&Messages)
+
 	case http.MethodPost:
 		user, err := getUser(r)
 		if err != nil {

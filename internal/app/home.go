@@ -1,6 +1,7 @@
 package app
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/with-insomnia/Forum-Golang/internal/model"
@@ -25,6 +26,7 @@ func (app *App) IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 	post, err := app.postService.GetAllPosts()
 	if err != nil {
+		log.Println(err)
 		pkg.ErrorHandler(w, http.StatusInternalServerError)
 		return
 	}
