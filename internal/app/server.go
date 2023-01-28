@@ -17,6 +17,10 @@ func (app *App) Run() *http.Server {
 		"/welcome",
 		"/sign-in",
 		"/sign-up",
+		"/welcome/filter",
+		"/welcome/comment",
+		"/post/like",
+		"/post/dislike",
 	}
 
 	AddAuthPaths(authPaths...)
@@ -26,9 +30,10 @@ func (app *App) Run() *http.Server {
 	mux.HandleFunc("/", app.authorizedMiddleware(app.IndexHandler))
 	mux.HandleFunc("/post", app.authorizedMiddleware(app.PostHandler))
 	mux.HandleFunc("/comment", app.authorizedMiddleware(app.CommentHandler))
-	mux.HandleFunc("/reaction", app.authorizedMiddleware(app.ReactionHandler))
+	mux.HandleFunc("/post/like", app.authorizedMiddleware(app.ReactionHandler))
+	mux.HandleFunc("/post/dislike", app.authorizedMiddleware(app.ReactionHandler))
 	mux.HandleFunc("/filter", app.authorizedMiddleware(app.FilterHandler))
-	mux.HandleFunc("/logout", app.authorizedMiddleware(app.LogoutHandler))
+	mux.HandleFunc("/logout", app.LogoutHandler)
 
 	mux.HandleFunc("/welcome/filter", app.nonAuthorizedMiddleware(app.FilterWelcomeHandler))
 	mux.HandleFunc("/welcome", app.nonAuthorizedMiddleware(app.WelcomeHandler))

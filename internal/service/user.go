@@ -25,7 +25,7 @@ func (u *userService) GetUserByToken(token string) (model.User, error) {
 	if err != nil {
 		return model.User{}, err
 	}
-	user, err := u.repository.GetUserByUserId(userID + 1)
+	user, err := u.repository.GetUserByUserId(userID)
 	if err != nil {
 		return model.User{}, err
 	}

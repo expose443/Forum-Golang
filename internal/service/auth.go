@@ -57,7 +57,7 @@ func (a *authService) Login(user *model.User) (model.Session, error) {
 	sessionToken := uuid.NewString()
 	expiry := time.Now().Add(10 * time.Minute)
 	session := model.Session{
-		UserId: user.ID,
+		UserId: userDB.ID,
 		Token:  sessionToken,
 		Expiry: expiry,
 	}

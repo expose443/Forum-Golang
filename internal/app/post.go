@@ -35,29 +35,17 @@ func (app *App) PostHandler(w http.ResponseWriter, r *http.Request) {
 			CreateTime: time.Now().Format(time.RFC822),
 		}
 
-		id, err := app.postService.CreatePost(&post)
+		status, err := app.postService.CreatePost(&post)
 		if err != nil {
 			log.Println(err)
-			switch id {
-			case -500:
+			switch status {
+			case http.StatusInternalServerError:
 				pkg.ErrorHandler(w, http.StatusInternalServerError)
 				return
-			default:
+			case http.StatusBadRequest:
 				pkg.ErrorHandler(w, http.StatusBadRequest)
 				return
 			}
-		}
-
-		categories := model.Category{
-			CategoryName: post.Category,
-			PostId:       id,
-		}
-
-		err = app.postService.CreateCategory(&categories)
-		if err != nil {
-			log.Println(err)
-			pkg.ErrorHandler(w, http.StatusInternalServerError)
-			return
 		}
 		http.Redirect(w, r, "/", http.StatusFound)
 

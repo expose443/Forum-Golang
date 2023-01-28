@@ -35,6 +35,7 @@ func createTable(db *sql.DB) error {
 	CREATE TABLE IF NOT EXISTS posts(
 		post_id INTEGER PRIMARY KEY AUTOINCREMENT,
 		user_id INTEGER NOT NULL,
+		username TEXT NOT NULL,
 		title TEXT NOT NULL,
 		message TEXT NOT NULL,
 		like INTEGER NOT NULL,
@@ -56,6 +57,7 @@ func createTable(db *sql.DB) error {
 		comment_id INTEGER PRIMARY KEY AUTOINCREMENT,
 		post_id INTEGER NOT NULL,
 		user_Id INTEGER NOT NULL,
+		username TEXT NOT NULL,
 		message TEXT NOT NULL,
 		like INTEGER NOT NULL,
 		dislike INTEGER NOT NULL,

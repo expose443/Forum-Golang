@@ -32,11 +32,7 @@ func (s *sessionQuery) CreateSession(session model.Session) error {
 }
 
 func (s *sessionQuery) GetSessionByToken(token string) (model.Session, error) {
-	stmt, err := s.db.Prepare("SELECT user_id, token, expiry FROM sessions WHERE token = ?")
-	if err != nil {
-		return model.Session{}, err
-	}
-	row := stmt.QueryRow(token)
+	row := s.db.QueryRow("SELECT user_id, token, expiry FROM sessions WHERE token = ?", token)
 	var session model.Session
 	if err := row.Scan(&session.UserId, &session.Token, &session.Expiry); err != nil {
 		return model.Session{}, err
@@ -45,11 +41,7 @@ func (s *sessionQuery) GetSessionByToken(token string) (model.Session, error) {
 }
 
 func (s *sessionQuery) GetSessionByUserID(userId int) (model.Session, error) {
-	stmt, err := s.db.Prepare("SELECT user_id, token, expiry FROM sessions WHERE user_id = ?")
-	if err != nil {
-		return model.Session{}, err
-	}
-	row := stmt.QueryRow(userId)
+	row := s.db.QueryRow("SELECT user_id, token, expiry FROM sessions WHERE user_id = ?", userId)
 	var session model.Session
 	if err := row.Scan(&session.UserId, &session.Token, &session.Expiry); err != nil {
 		return model.Session{}, err
@@ -70,4 +62,21 @@ func (s *sessionQuery) DeleteSession(token string) error {
 		return errors.New("delete session was failed")
 	}
 	return nil
+}
+
+func (s *sessionQuery) GetAllSessionsTime() ([]model.Session, error) {
+	rows, err := s.db.Query("SELECT expiry, token FROM sessions")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var sessions []model.Session
+	for rows.Next() {
+		var session model.Session
+		if err := rows.Scan(&session.Expiry, &session.Token); err != nil {
+			return nil, err
+		}
+		sessions = append(sessions, session)
+	}
+	return sessions, nil
 }

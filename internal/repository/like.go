@@ -26,7 +26,7 @@ func (p *postQuery) GetLikeStatus(postId, userId int) int {
 
 func (p *postQuery) LikePost(post_id, user_id, status int) error {
 	query := `INSERT INTO likes(post_id, user_id, status) VALUES(?,?,?)`
-	_, err := p.db.Exec(query, post_id, user_id)
+	_, err := p.db.Exec(query, post_id, user_id, status)
 	return err
 }
 

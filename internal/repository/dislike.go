@@ -15,6 +15,6 @@ func (p *postQuery) DeletePostDisLike(post_id, user_id int) error {
 
 func (p *postQuery) DisLikePost(post_id, user_id, status int) error {
 	query := `INSERT INTO dislikes(post_id, user_id, status) VALUES(?,?,?)`
-	_, err := p.db.Exec(query, post_id, user_id)
+	_, err := p.db.Exec(query, post_id, user_id, status)
 	return err
 }

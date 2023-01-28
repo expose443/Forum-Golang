@@ -131,10 +131,10 @@
             {{ .InitialPost.Content }}
         </div>
         <div class="post__actions">
-            <form action="/like-post?id={{ .InitialPost.ID}}&path=/comment-view?id={{ .InitialPost.ID}}" method="post">
+            <form action="/post/like?id={{.InitialPost.ID}}&path=/comment?id={{ .InitialPost.ID}}" method="post">
                 <span class="post__likes"><input  class="imagesL" type="image" src="/static/img/love.png" width="50">{{ .InitialPost.Like}}</span>
                </form>
-            <form action="/dislike-post?id={{.InitialPost.ID}}&path=/comment-view?id={{ .InitialPost.ID}}" method="post">
+            <form action="/post/dislike?id={{.InitialPost.ID}}&path=/comment?id={{ .InitialPost.ID}}" method="post">
                 <span class="post__dislikes"><input  class="imagesD" type="image" src="/static/img/dislike.png" width="50">{{ .InitialPost.Dislike}}</span>
                </form>
         </div>
@@ -151,10 +151,10 @@
                 <p> {{ .Message}} </p>
             </div>
             <div class="likes-dislikes">
-                <form action="/like-comment?id={{.ID}}" method="post">
+                <form action="/comment/like?id={{.ID}}" method="post">
                     <input type="image"  class="imagesL" src="/static/img/love.png" width="45">{{ .Like}}
                    </form>
-                <form action="/dislike-comment?id={{.ID}}" method="post">
+                <form action="/comment/dislike?id={{.ID}}" method="post">
                     <input type="image"  class="imagesD" src="/static/img/dislike.png" width="45">{{ .Dislike}}
                    </form>
             </div>

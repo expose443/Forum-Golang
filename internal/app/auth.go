@@ -79,17 +79,8 @@ func (app *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("session_token")
-	if err != nil {
-		pkg.ErrorHandler(w, http.StatusInternalServerError)
-		return
-	}
-	err = app.authService.Logout(c.Value)
-	if err != nil {
-		log.Println(err)
-		pkg.ErrorHandler(w, http.StatusInternalServerError)
-		return
-	}
+	c, _ := r.Cookie("session_token")
+	app.authService.Logout(c.Value)
 	http.Redirect(w, r, "/welcome", http.StatusFound)
 }
 

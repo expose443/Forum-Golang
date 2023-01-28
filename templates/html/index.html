@@ -78,18 +78,18 @@
                 {{ .Content}}
             </div>
             <div class="post__actions">
-                <form action="/like-post?id={{.ID}}" method="post">
+                <form action="/post/like?id={{.ID}}" method="post">
                     <span class="post__likes"><input class="imagesL" type="image" src="/static/img/love.png" width="50">{{ .Like}}</span>
                    </form>
-                <form   action="/dislike-post?id={{.ID}}" method="post">
+                <form   action="/post/dislike?id={{.ID}}" method="post">
                     <span class="post__dislikes"><input  class="imagesD" type="image" src="/static/img/dislike.png" width="50">{{ .Dislike}}</span>
                    </form>
             </div>
-            <form action="/comment-post?id={{.ID}}" method="post">
+            <form action="/comment?id={{.ID}}" method="post">
                 <input  type="text" name="comment" required>
                 <input type="submit" value="create comment">
             </form>
-            <form class="view" action="/comment-view?id={{.ID}}" method="post">
+            <form class="view" action="/comment?id={{.ID}}" method="get">
                 <input type="submit" value="view comment">
             </form>
         </div>
