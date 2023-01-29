@@ -139,6 +139,7 @@
                </form>
         </div>
         <h3>Comments: </h3>
+        {{ $id :=  .InitialPost.ID }}
         {{ range .Comment}}
         <div class="comment">
             <div class="author">
@@ -151,10 +152,10 @@
                 <p> {{ .Message}} </p>
             </div>
             <div class="likes-dislikes">
-                <form action="/comment/like?id={{.ID}}" method="post">
+                <form action="/comment/like?id={{.ID}}&path=/comment?id={{ $id }}" method="post">
                     <input type="image"  class="imagesL" src="/static/img/love.png" width="45">{{ .Like}}
                    </form>
-                <form action="/comment/dislike?id={{.ID}}" method="post">
+                <form action="/comment/dislike?id={{.ID}}&path=/comment?id={{ $id }}" method="post">
                     <input type="image"  class="imagesD" src="/static/img/dislike.png" width="45">{{ .Dislike}}
                    </form>
             </div>

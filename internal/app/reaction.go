@@ -13,14 +13,16 @@ func (app *App) ReactionHandler(w http.ResponseWriter, r *http.Request) {
 		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
-	strId := r.URL.Query().Get("id")
+	path := r.URL.Query().Get("path")
+	if path == "" {
+		path = "/"
+	}
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
 		pkg.ErrorHandler(w, http.StatusBadRequest)
 		return
 	}
-	path := r.URL.Query().Get("path")
-	user, ok := r.Context().Value(keyUser).(model.User)
+	user, ok := r.Context().Value(keyUserType(keyUser)).(model.User)
 	if !ok {
 		pkg.ErrorHandler(w, http.StatusUnauthorized)
 		return
@@ -36,7 +38,6 @@ func (app *App) ReactionHandler(w http.ResponseWriter, r *http.Request) {
 			pkg.ErrorHandler(w, http.StatusBadRequest)
 			return
 		case http.StatusOK:
-			path = "/"
 			http.Redirect(w, r, path, http.StatusFound)
 
 		}
@@ -50,7 +51,6 @@ func (app *App) ReactionHandler(w http.ResponseWriter, r *http.Request) {
 			pkg.ErrorHandler(w, http.StatusBadRequest)
 			return
 		case http.StatusOK:
-			path = "/"
 			http.Redirect(w, r, path, http.StatusFound)
 		}
 	case "/comment/like":
@@ -63,7 +63,6 @@ func (app *App) ReactionHandler(w http.ResponseWriter, r *http.Request) {
 			pkg.ErrorHandler(w, http.StatusBadRequest)
 			return
 		case http.StatusOK:
-			path = "/comment?id=" + strId
 			http.Redirect(w, r, path, http.StatusFound)
 		}
 	case "/comment/dislike":
@@ -76,7 +75,6 @@ func (app *App) ReactionHandler(w http.ResponseWriter, r *http.Request) {
 			pkg.ErrorHandler(w, http.StatusBadRequest)
 			return
 		case http.StatusOK:
-			path = "/comment?id=" + strId
 			http.Redirect(w, r, path, http.StatusFound)
 		}
 	default:

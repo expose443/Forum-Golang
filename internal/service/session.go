@@ -9,6 +9,7 @@ type SessionService interface {
 	CreateSession(session *model.Session) error
 	GetSessionByToken(token string) (model.Session, error)
 	GetSessionByUserID(userId int) (model.Session, error)
+	GetAllSessionsTime() ([]model.Session, error)
 	DeleteSession(token string) error
 }
 
@@ -46,4 +47,8 @@ func (s *sessionService) GetSessionByUserID(userId int) (model.Session, error) {
 
 func (s *sessionService) DeleteSession(token string) error {
 	return s.SessionQuery.DeleteSession(token)
+}
+
+func (s *sessionService) GetAllSessionsTime() ([]model.Session, error) {
+	return s.SessionQuery.GetAllSessionsTime()
 }

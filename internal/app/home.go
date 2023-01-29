@@ -18,7 +18,7 @@ func (app *App) IndexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, ok := r.Context().Value(keyUser).(model.User)
+	user, ok := r.Context().Value(keyUserType(keyUser)).(model.User)
 	if !ok {
 		pkg.ErrorHandler(w, http.StatusUnauthorized)
 		return
@@ -44,5 +44,14 @@ func (app *App) WelcomeHandler(w http.ResponseWriter, r *http.Request) {
 		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
-	pkg.RenderTemplate(w, "welcome.html", model.Data{})
+	post, err := app.postService.GetAllPosts()
+	if err != nil {
+		log.Println(err)
+		pkg.ErrorHandler(w, http.StatusInternalServerError)
+		return
+	}
+	data := model.Data{
+		Posts: post,
+	}
+	pkg.RenderTemplate(w, "welcome.html", data)
 }

@@ -21,7 +21,7 @@ func (app *App) PostHandler(w http.ResponseWriter, r *http.Request) {
 		message := r.FormValue("message")
 		genre := r.Form["category"]
 
-		user, ok := r.Context().Value(keyUser).(model.User)
+		user, ok := r.Context().Value(keyUserType(keyUser)).(model.User)
 		if !ok {
 			pkg.ErrorHandler(w, http.StatusUnauthorized)
 			return

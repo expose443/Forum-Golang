@@ -18,14 +18,6 @@
                     <span class="nav-item"> {{.User.Username}}
                     </span>
             </a></li>
-            <li><a href="/filter?category=most-like">
-                <i class="fas fa-home"> </i>
-                <span class="nav-item">MostLiked</span>
-            </a></li>
-            <li><a href="/filter?category=most-dislike">
-                <i class="fas fa-sun"> </i>
-                <span class="nav-item">MostDisliked</span>
-            </a></li>
             <li><a href="/filter?category=liked-post">
                 <i class="fas fa-heart"> </i>
                 <span class="nav-item">Liked posts</span>
@@ -34,7 +26,7 @@
                 <i class="fas fa-tasks"> </i>
                 <span class="nav-item">Created posts</span>
             </a></li>
-            <li><a href="/filter?category=fantazy">
+            <li><a href="/filter?category=fantasy">
                 <i class="fas fa-question-circle"> </i>
                 <span class="nav-item">Fantazy</span>
             </a></li>
@@ -80,20 +72,18 @@
             {{ .Content}}
         </div>
         <div class="post__actions">
-            <form action="/like-post?id={{.ID}}&path=/filter?category={{ $genre}}" method="post">
+            <form action="/post/like?id={{.ID}}&path=/filter?category={{ $genre}}" method="post">
                 <span class="post__likes"><input type="image"  class="imagesL" src="/static/img/love.png" width="50">{{ .Like}}</span>
                </form>
-            <form action="/dislike-post?id={{.ID}}&path=/filter?category={{ $genre}}" method="post">
+            <form action="/post/dislike?id={{.ID}}&path=/filter?category={{ $genre}}" method="post">
                 <span class="post__dislikes"><input type="image"  class="imagesD" src="/static/img/dislike.png" width="50">{{ .Dislike}}</span>
                </form>
         </div>
-        <form action="/comment-post?id={{.ID}}" method="post">
+        <form action="/comment?id={{.ID}}" method="post">
             <input  type="text" name="comment" required>
             <input type="submit" value="create comment">
         </form>
-        <form class="view" action="/comment-view?id={{.ID}}"  method="post">
-            <input type="submit" value="view comment">
-        </form>
+        <a href="/comment?id={{.ID}}">view comment</a>
     </div>
     {{end}}
 </body>

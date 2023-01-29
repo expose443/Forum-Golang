@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -48,7 +49,7 @@ func (app *App) CommentHandler(w http.ResponseWriter, r *http.Request) {
 
 		path := "/comment?id=" + (r.URL.Query().Get("id"))
 
-		user, ok := r.Context().Value(keyUser).(model.User)
+		user, ok := r.Context().Value(keyUserType(keyUser)).(model.User)
 		if !ok {
 			pkg.ErrorHandler(w, http.StatusUnauthorized)
 			return
@@ -62,7 +63,9 @@ func (app *App) CommentHandler(w http.ResponseWriter, r *http.Request) {
 			Born:     time.Now().Format(time.RFC822),
 		}
 		status, err := app.postService.CreateComment(&comment)
-		log.Println(err)
+		if err != nil {
+			fmt.Println(err)
+		}
 		switch status {
 		case http.StatusInternalServerError:
 			pkg.ErrorHandler(w, http.StatusInternalServerError)

@@ -30,7 +30,7 @@ func main() {
 	userService := service.NewUserService(dao)
 	app := app.NewAppService(authService, sessionService, postService, userService)
 	server := app.Run()
-
+	go app.ClearSession()
 	go func() {
 		log.Printf("server started at http://localhost%v\n", server.Addr)
 		if err := server.ListenAndServe(); err != nil {
@@ -38,7 +38,7 @@ func main() {
 		}
 	}()
 
-	shutdown := make(chan os.Signal)
+	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	<-shutdown
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

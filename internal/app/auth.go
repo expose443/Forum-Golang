@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"time"
 
 	"github.com/with-insomnia/Forum-Golang/internal/model"
 	"github.com/with-insomnia/Forum-Golang/pkg"
@@ -94,7 +95,7 @@ func getUser(r *http.Request) (model.User, error) {
 		return model.User{}, errors.New("name regex fail")
 	}
 
-	emailRegex, err := regexp.Compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}")
+	emailRegex, err := regexp.Compile(`[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}`)
 	if err != nil {
 		return model.User{}, errors.New("name regex fail")
 	}
@@ -129,6 +130,32 @@ func getUser(r *http.Request) (model.User, error) {
 			return model.User{}, errors.New("invalid user data for sign up")
 		}
 	default:
-		return model.User{}, fmt.Errorf("This url path was not found %s", r.URL.Path)
+		return model.User{}, fmt.Errorf("this url path was not found %s", r.URL.Path)
+	}
+}
+
+func (app *App) ClearSession() {
+	sessions, err := app.sessionService.GetAllSessionsTime()
+	if err != nil {
+		fmt.Println("error when get all session time", err.Error())
+	}
+
+	for {
+		time.Sleep(time.Second)
+		for i, v := range sessions {
+			if v.Expiry.Before(time.Now()) {
+				err := app.sessionService.DeleteSession(v.Token)
+				if i == len(sessions)-1 {
+					sessions = sessions[:i]
+				} else {
+					sessions = append(sessions[:i], sessions[i+1:]...)
+				}
+				if err != nil {
+					fmt.Println("session delete was fail", err.Error())
+				} else {
+					fmt.Printf("session for %s was delete\n", v.Username)
+				}
+			}
+		}
 	}
 }

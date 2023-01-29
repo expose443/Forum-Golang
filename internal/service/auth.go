@@ -46,7 +46,7 @@ func (a *authService) Login(user *model.User) (model.Session, error) {
 	sessionDb, err := a.sessionQuery.GetSessionByUserID(int(userDB.ID))
 	if err != nil {
 		log.Printf("session for user_id %d is not found\n", userDB.ID)
-	} else if sessionDb.UserId == user.ID {
+	} else {
 		err := a.sessionQuery.DeleteSession(sessionDb.Token)
 		if err != nil {
 			log.Println(err)

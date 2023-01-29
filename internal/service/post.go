@@ -17,6 +17,8 @@ type PostService interface {
 	CreatePost(post *model.Post) (int, error)
 	GetAllCommentsAndPostByPostID(id int64) (model.Post, int)
 	CreateComment(comment *model.Comment) (int, error)
+	GetFilterPosts(genre string, user model.User) (model.Data, int)
+	GetWelcomeFilterPosts(genre string) (model.Data, int)
 }
 
 type postService struct {
@@ -87,11 +89,44 @@ func validDataString(s string) bool {
 }
 
 func validCategory(s string) bool {
+	category := make(map[string]struct{})
+	valid := []string{
+		"romance",
+		"adventure",
+		"comedy",
+		"drama",
+		"fantasy",
+	}
+	for _, v := range valid {
+		category[v] = struct{}{}
+	}
+
 	str := strings.Split(s, " ")
 	for _, v := range str {
-		if v != "romance" && v != "adventure" && v != "comedy" && v != "drama" && v != "fantasy" {
+		if _, ok := category[v]; !ok {
 			return false
 		}
 	}
+	return true
+}
+
+func validCategoryFilter(s string) bool {
+	category := make(map[string]struct{})
+	valid := []string{
+		"romance",
+		"adventure",
+		"comedy",
+		"drama",
+		"fantasy",
+		"liked-post",
+		"created-post",
+	}
+	for _, v := range valid {
+		category[v] = struct{}{}
+	}
+	if _, ok := category[s]; !ok {
+		return false
+	}
+
 	return true
 }

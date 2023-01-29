@@ -23,7 +23,13 @@ func (p *postService) GetAllCommentsAndPostByPostID(id int64) (model.Post, int) 
 		return model.Post{}, 500
 	}
 
-	initialPost.Comment = comments
+	sortedComments := []model.Comment{}
+
+	for i := len(comments) - 1; i >= 0; i-- {
+		sortedComments = append(sortedComments, comments[i])
+	}
+
+	initialPost.Comment = sortedComments
 	return initialPost, 200
 }
 

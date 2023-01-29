@@ -11,6 +11,7 @@ import (
 type SessionQuery interface {
 	GetSessionByToken(token string) (model.Session, error)
 	GetSessionByUserID(userId int) (model.Session, error)
+	GetAllSessionsTime() ([]model.Session, error)
 	CreateSession(session model.Session) error
 	DeleteSession(token string) error
 }

@@ -11,6 +11,8 @@ import (
 
 var AuthPaths = make(map[string]struct{})
 
+type keyUserType string
+
 const keyUser = "user"
 
 func AddAuthPaths(paths ...string) {
@@ -47,7 +49,7 @@ func (app *App) authorizedMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
-		ctx := context.WithValue(r.Context(), keyUser, user)
+		ctx := context.WithValue(r.Context(), keyUserType(keyUser), user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -73,6 +75,5 @@ func (app *App) nonAuthorizedMiddleware(next http.HandlerFunc) http.HandlerFunc 
 			return
 		}
 		http.Redirect(w, r, "/", http.StatusFound)
-		return
 	})
 }
