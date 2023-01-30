@@ -130,3 +130,25 @@ func validCategoryFilter(s string) bool {
 
 	return true
 }
+
+func validCategoryWelcome(s string) bool {
+	category := make(map[string]struct{})
+	valid := []string{
+		"romance",
+		"adventure",
+		"comedy",
+		"drama",
+		"fantasy",
+	}
+	for _, v := range valid {
+		category[v] = struct{}{}
+	}
+
+	str := strings.Split(s, " ")
+	for _, v := range str {
+		if _, ok := category[v]; !ok {
+			return false
+		}
+	}
+	return true
+}

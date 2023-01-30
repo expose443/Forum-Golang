@@ -77,6 +77,9 @@ func (p *postService) GetFilterPosts(genre string, user model.User) (model.Data,
 }
 
 func (p *postService) GetWelcomeFilterPosts(genre string) (model.Data, int) {
+	if ok := validCategoryWelcome(genre); !ok {
+		return model.Data{}, 400
+	}
 	var posts []model.Post
 	categories, err := p.repository.GetCategory()
 	if err != nil {

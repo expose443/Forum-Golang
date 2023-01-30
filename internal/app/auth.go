@@ -42,6 +42,8 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			Expires: session.Expiry,
 		})
 
+		Sessions = append(Sessions, session)
+
 		http.Redirect(w, r, "/", http.StatusFound)
 
 	default:
@@ -80,8 +82,14 @@ func (app *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	c, _ := r.Cookie("session_token")
-	app.authService.Logout(c.Value)
+	if r.Method != http.MethodPost {
+		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
+		return
+	}
+	c, err := r.Cookie("session_token")
+	if err == nil {
+		app.authService.Logout(c.Value)
+	}
 	http.Redirect(w, r, "/welcome", http.StatusFound)
 }
 
@@ -134,21 +142,23 @@ func getUser(r *http.Request) (model.User, error) {
 	}
 }
 
+var Sessions []model.Session
+
 func (app *App) ClearSession() {
-	sessions, err := app.sessionService.GetAllSessionsTime()
+	all, err := app.sessionService.GetAllSessionsTime()
 	if err != nil {
 		fmt.Println("error when get all session time", err.Error())
 	}
-
+	Sessions = all
 	for {
 		time.Sleep(time.Second)
-		for i, v := range sessions {
+		for i, v := range Sessions {
 			if v.Expiry.Before(time.Now()) {
 				err := app.sessionService.DeleteSession(v.Token)
-				if i == len(sessions)-1 {
-					sessions = sessions[:i]
+				if i == len(Sessions)-1 {
+					Sessions = Sessions[:i]
 				} else {
-					sessions = append(sessions[:i], sessions[i+1:]...)
+					Sessions = append(Sessions[:i], Sessions[i+1:]...)
 				}
 				if err != nil {
 					fmt.Println("session delete was fail", err.Error())
