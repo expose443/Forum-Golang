@@ -15,12 +15,10 @@ import (
 func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-
 		pkg.RenderTemplate(w, "signin.html", Messages)
 		pkg.ClearStruct(&Messages)
 
 	case http.MethodPost:
-
 		user, err := getUser(r)
 		if err != nil {
 			Messages.Message = "Wrong password or email"
@@ -28,14 +26,12 @@ func (app *App) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 			return
 		}
-
 		session, err := app.authService.Login(&user)
 		if err != nil {
 			Messages.Message = "Wrong password or email"
 			http.Redirect(w, r, "/sign-in", http.StatusFound)
 			return
 		}
-
 		http.SetCookie(w, &http.Cookie{
 			Name:    "session_token",
 			Value:   session.Token,

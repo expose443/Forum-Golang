@@ -9,12 +9,18 @@ import (
 	"time"
 
 	"github.com/with-insomnia/Forum-Golang/internal/app"
+	"github.com/with-insomnia/Forum-Golang/internal/config"
 	"github.com/with-insomnia/Forum-Golang/internal/repository"
 	"github.com/with-insomnia/Forum-Golang/internal/service"
 )
 
 func main() {
-	db, err := repository.NewDB()
+	cfg, err := config.InitConfig("./config/config.json")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	db, err := repository.NewDB(cfg.Database)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -28,11 +34,12 @@ func main() {
 	sessionService := service.NewSessionService(dao)
 	postService := service.NewPostService(dao)
 	userService := service.NewUserService(dao)
-	app := app.NewAppService(authService, sessionService, postService, userService)
-	server := app.Run()
+
+	app := app.NewAppService(authService, sessionService, postService, userService, cfg)
+	server := app.Run(cfg.Http)
 	go app.ClearSession()
 	go func() {
-		log.Printf("server started at http://localhost%v\n", server.Addr)
+		log.Printf("server started at %s", cfg.ServerAddress)
 		if err := server.ListenAndServe(); err != nil {
 			log.Printf("listen: %s\n", err)
 		}

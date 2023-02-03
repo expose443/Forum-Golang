@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/with-insomnia/Forum-Golang/internal/config"
 	"github.com/with-insomnia/Forum-Golang/internal/model"
 	"github.com/with-insomnia/Forum-Golang/internal/service"
 )
@@ -12,6 +13,7 @@ type App struct {
 	sessionService service.SessionService
 	postService    service.PostService
 	userService    service.UserService
+	cfg            config.Config
 }
 
 func NewAppService(
@@ -19,12 +21,13 @@ func NewAppService(
 	sessionService service.SessionService,
 	postService service.PostService,
 	userService service.UserService,
-
+	cfg config.Config,
 ) App {
 	return App{
 		authService:    authService,
 		sessionService: sessionService,
 		postService:    postService,
 		userService:    userService,
+		cfg:            cfg,
 	}
 }

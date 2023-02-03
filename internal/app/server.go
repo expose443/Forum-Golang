@@ -2,11 +2,12 @@ package app
 
 import (
 	"net/http"
-	"os"
 	"time"
+
+	"github.com/with-insomnia/Forum-Golang/internal/config"
 )
 
-func (app *App) Run() *http.Server {
+func (app *App) Run(cfg config.Http) *http.Server {
 	authPaths := []string{
 		"/",
 		"/reaction",
@@ -48,16 +49,11 @@ func (app *App) Run() *http.Server {
 	fs := http.FileServer(http.Dir("./templates/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
 
-	port, ok := os.LookupEnv("FORUM_PORT")
-	if !ok {
-		port = ":8080"
-	}
-
 	server := &http.Server{
-		ReadTimeout:  time.Second * 30,
-		WriteTimeout: time.Second * 30,
-		IdleTimeout:  time.Second * 30,
-		Addr:         port,
+		ReadTimeout:  time.Second * time.Duration(cfg.ReadTimeout),
+		WriteTimeout: time.Second * time.Duration(cfg.WriteTimeout),
+		IdleTimeout:  time.Second * time.Duration(cfg.IdleTimeout),
+		Addr:         cfg.Port,
 		Handler:      mux,
 	}
 	return server

@@ -5,10 +5,11 @@ import (
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/with-insomnia/Forum-Golang/internal/config"
 )
 
-func NewDB() (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "database.db")
+func NewDB(cfg config.Database) (*sql.DB, error) {
+	db, err := sql.Open("sqlite3", cfg.DBname)
 	if err != nil {
 		return nil, err
 	}
