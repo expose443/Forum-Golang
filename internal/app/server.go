@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/with-insomnia/Forum-Golang/internal/config"
 )
 
@@ -28,7 +30,8 @@ func (app *App) Run(cfg config.Http) *http.Server {
 
 	AddAuthPaths(authPaths...)
 
-	mux := http.NewServeMux()
+	mux := chi.NewRouter()
+	mux.Use(middleware.Logger)
 
 	mux.HandleFunc("/", app.authorizedMiddleware(app.IndexHandler))
 	mux.HandleFunc("/post", app.authorizedMiddleware(app.PostHandler))
