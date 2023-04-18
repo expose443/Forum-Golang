@@ -50,7 +50,7 @@ func (app *App) Run(cfg config.Http) *http.Server {
 	mux.HandleFunc("/welcome/comment", app.nonAuthorizedMiddleware(app.CommentWelcomeHandler))
 
 	fs := http.FileServer(http.Dir("./templates/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fs))
+	mux.Handle("/static/*", http.StripPrefix("/static", fs))
 
 	server := &http.Server{
 		ReadTimeout:  time.Second * time.Duration(cfg.ReadTimeout),
