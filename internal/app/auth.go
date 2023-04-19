@@ -78,10 +78,10 @@ func (app *App) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	pkg.ErrorHandler(w, http.StatusMethodNotAllowed)
+	// 	return
+	// }
 	c, err := r.Cookie("session_token")
 	if err == nil {
 		app.authService.Logout(c.Value)
